@@ -1,6 +1,6 @@
 import uuid
 import sqlalchemy as sa
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.models.users import Base
@@ -16,7 +16,7 @@ class User(Base):
 
 class UserProfile(Base):
     __tablename__ = 'user_profile'
-    id = Column(Integer, primary_key=True)
-    title = Column(String)
-    bio = Column(String)
-    user_id = Column(Integer, ForeignKey('user.id'))
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
+    title: Mapped[str] = mapped_column(sa.String())
+    bio: Mapped[str] = mapped_column(String)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey('user.id'))
