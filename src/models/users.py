@@ -1,4 +1,5 @@
 import sqlalchemy as sa
+from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import DeclarativeMeta, Mapped, declarative_base, mapped_column, relationship
 import uuid
 
@@ -16,8 +17,8 @@ class BaseServiceModel:
 Base: DeclarativeMeta = declarative_base(metadata=metadata, cls=BaseServiceModel)
 
 
-class User(Base):
-    __tablename__ = 'user'
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
-    title: Mapped[str] = mapped_column(sa.String())
-    user_profile = relationship('UserProfile', backref='user', uselist=False)
+class OrdersItems(Base):
+    __tablename__ = 'orders_items'
+    id = Column(Integer, primary_key=True)
+    orders_id = Column(Integer, ForeignKey('orders.id'))
+    items_id = Column(Integer, ForeignKey('items.id'))
