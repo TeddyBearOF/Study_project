@@ -16,7 +16,7 @@ class UserUpdate(UserBase):
 
 
 class User(UserBase):
-    id: uuid.UUID
+    pass
 
     class Config:
         from_attributes = True
@@ -38,7 +38,7 @@ class UserProfileUpdate(UserProfileBase):
 
 
 class UserProfile(UserProfileBase):
-    id: uuid.UUID
+    pass
 
     class Config:
         from_attributes = True

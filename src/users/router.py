@@ -8,11 +8,13 @@ from src.users.schemas import UserWithProfile, UserCreateWithProfile, User, User
 router = APIRouter(prefix="/users", tags=["users"])
 
 
+
 @router.post("/", response_model=UserWithProfile)
 async def create_user_with_profile(
         user_data: UserCreateWithProfile,
         session: Session = Depends(get_session)
 ):
+    #model_dump
     db_user = User(**user_data.user.dict())
     session.add(db_user)
     session.commit()
