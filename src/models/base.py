@@ -17,4 +17,3 @@ class BaseServiceModel:
 
 Base: DeclarativeMeta = declarative_base(metadata=metadata, cls=BaseServiceModel)
 
-
