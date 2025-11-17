@@ -4,7 +4,7 @@ from fastapi import HTTPException
 
 from src.models.user import User
 from src.models.user_profile import UserProfile
-from src.users.schemas import UserCreate, UserUpdate, UserProfileCreate, UserProfileUpdate
+from src.schemas.base_schemas import UserCreate, UserUpdate, UserProfileCreate, UserProfileUpdate
 
 
 class UserService:

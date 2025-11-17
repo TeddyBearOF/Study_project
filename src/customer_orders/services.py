@@ -5,7 +5,7 @@ from fastapi import HTTPException
 
 from src.models.customer import Customer
 from src.models.orders import Orders
-from src.customer_orders.schemas import CustomerCreate, CustomerUpdate, OrdersCreate, OrdersUpdate
+from src.schemas.base_schemas import CustomerCreate, CustomerUpdate, OrdersCreate, OrdersUpdate
 
 
 class CustomerService:

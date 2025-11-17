@@ -4,7 +4,7 @@ import uuid
 
 from src.db import get_session
 from src.users.services import UserService, UserProfileService
-from src.users.schemas import UserWithProfile, UserCreateWithProfile, UserUpdateWithProfile, UserProfile, \
+from src.schemas.composite_schemas import UserWithProfile, UserCreateWithProfile, UserUpdateWithProfile, UserProfile, \
     UserProfileUpdate
 
 router = APIRouter(prefix="/users", tags=["users"])

@@ -6,7 +6,7 @@ import uuid
 
 from src.db import get_session
 from src.orders_items.services import OrdersItemsService, ItemsService
-from src.orders_items.schemas import (
+from src.schemas.composite_schemas import (
     OrdersWithItemsAndCustomer,
     OrdersCreateWithItems,
     OrdersUpdateWithItems,

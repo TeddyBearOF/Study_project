@@ -4,7 +4,7 @@ import uuid
 
 from src.db import get_session
 from src.customer_orders.services import CustomerService, OrdersService
-from src.customer_orders.schemas import (
+from src.schemas.composite_schemas import (
     CustomerWithOrders,
     CustomerCreateWithOrders,
     CustomerUpdateWithOrders,
