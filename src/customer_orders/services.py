@@ -18,7 +18,6 @@ class CustomerService:
         db.commit()
         db.refresh(db_customer)
 
-        # Create Orders
         orders_list = []
         for order_data in orders_data:
             order_dict = order_data.dict()
@@ -29,7 +28,6 @@ class CustomerService:
 
         db.commit()
 
-        # Refresh all orders to get their IDs
         for order in orders_list:
             db.refresh(order)
 
@@ -50,7 +48,6 @@ class CustomerService:
     @staticmethod
     async def update_customer_with_orders(db: Session, customer_id: uuid.UUID, customer_update_data,
                                           orders_data: List[OrdersCreate]):
-        # Update Customer
         db_customer = db.query(Customer).filter(Customer.id == customer_id).first()
         if not db_customer:
             raise HTTPException(status_code=404, detail="Customer not found")
@@ -58,10 +55,8 @@ class CustomerService:
         for field, value in customer_update_data.dict().items():
             setattr(db_customer, field, value)
 
-        # Delete existing orders and create new ones
         db.query(Orders).filter(Orders.customer_id == customer_id).delete()
 
-        # Create new orders
         new_orders = []
         for order_data in orders_data:
             order_dict = order_data.dict()
@@ -73,7 +68,6 @@ class CustomerService:
         db.commit()
         db.refresh(db_customer)
 
-        # Refresh all new orders
         for order in new_orders:
             db.refresh(order)
 
@@ -87,7 +81,6 @@ class CustomerService:
         if not db_customer:
             raise HTTPException(status_code=404, detail="Customer not found")
 
-        # Delete associated orders first
         db.query(Orders).filter(Orders.customer_id == customer_id).delete()
         db.delete(db_customer)
         db.commit()
@@ -99,7 +92,6 @@ class OrdersService:
 
     @staticmethod
     async def create_order(db: Session, order_data: OrdersCreate):
-        # Check if customer exists
         customer = db.query(Customer).filter(Customer.id == order_data.customer_id).first()
         if not customer:
             raise HTTPException(status_code=404, detail="Customer not found")

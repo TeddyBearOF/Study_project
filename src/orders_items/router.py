@@ -18,9 +18,6 @@ from src.schemas.composite_schemas import (
 
 router = APIRouter(prefix="/orders-items", tags=["orders-items"])
 
-# ========== ORDERS WITH ITEMS CRUD OPERATIONS ==========
-
-# CREATE Order with Items
 @router.post("/orders/", response_model=OrdersWithItemsAndCustomer)
 async def create_order_with_items(
     order_data: OrdersCreateWithItems,
@@ -32,7 +29,6 @@ async def create_order_with_items(
         order_data.items
     )
 
-# READ Order by ID with Items
 @router.get("/orders/{order_id}", response_model=OrdersWithItemsAndCustomer)
 async def read_order_with_items(
     order_id: uuid.UUID,
@@ -40,7 +36,6 @@ async def read_order_with_items(
 ):
     return await OrdersItemsService.get_order_with_items(session, order_id)
 
-# UPDATE Order and Items
 @router.put("/orders/{order_id}", response_model=OrdersWithItemsAndCustomer)
 async def update_order_with_items(
     order_id: uuid.UUID,
@@ -54,7 +49,6 @@ async def update_order_with_items(
         order_data.items
     )
 
-# DELETE Order and associated Items relations
 @router.delete("/orders/{order_id}")
 async def delete_order_with_items(
     order_id: uuid.UUID,
@@ -62,9 +56,6 @@ async def delete_order_with_items(
 ):
     return await OrdersItemsService.delete_order_with_items(session, order_id)
 
-# ========== ITEMS CRUD OPERATIONS ==========
-
-# CREATE Item
 @router.post("/items/", response_model=Items)
 async def create_item(
     item_data: ItemsCreate,
@@ -72,7 +63,6 @@ async def create_item(
 ):
     return await ItemsService.create_item(session, item_data)
 
-# READ Item by ID with Orders
 @router.get("/items/{item_id}", response_model=ItemsWithOrders)
 async def read_item_with_orders(
     item_id: uuid.UUID,
@@ -80,7 +70,6 @@ async def read_item_with_orders(
 ):
     return await ItemsService.get_item_with_orders(session, item_id)
 
-# UPDATE Item
 @router.put("/items/{item_id}", response_model=Items)
 async def update_item(
     item_id: uuid.UUID,
@@ -89,7 +78,6 @@ async def update_item(
 ):
     return await ItemsService.update_item(session, item_id, item_data)
 
-# DELETE Item
 @router.delete("/items/{item_id}")
 async def delete_item(
     item_id: uuid.UUID,
@@ -97,7 +85,6 @@ async def delete_item(
 ):
     return await ItemsService.delete_item(session, item_id)
 
-# GET All Items
 @router.get("/items/", response_model=List[Items])
 async def get_all_items(session: Session = Depends(get_session)):
     return await ItemsService.get_all_items(session)

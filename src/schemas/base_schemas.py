@@ -45,7 +45,6 @@ class UserProfile(UserProfileBase):
         from_attributes = True
 
 
-# Customer Schemas
 class CustomerBase(BaseModel):
     title: str
 
@@ -65,7 +64,6 @@ class Customer(CustomerBase):
         from_attributes = True
 
 
-# Orders Schemas
 class OrdersBase(BaseModel):
     total_price: int
 
@@ -86,7 +84,6 @@ class Orders(OrdersBase):
         from_attributes = True
 
 
-# Items Schemas
 class ItemsBase(BaseModel):
     title: str
     price: int
@@ -107,7 +104,6 @@ class Items(ItemsBase):
         from_attributes = True
 
 
-# Orders Schemas (расширяем существующие)
 class OrdersBaseI(BaseModel):
     total_price: int
 
@@ -129,7 +125,6 @@ class OrdersI(OrdersBaseI):
         from_attributes = True
 
 
-# OrdersItems Schemas
 class OrdersItemsBase(BaseModel):
     order_id: uuid.UUID
     item_id: uuid.UUID

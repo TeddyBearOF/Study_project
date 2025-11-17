@@ -9,7 +9,6 @@ from src.schemas.composite_schemas import UserWithProfile, UserCreateWithProfile
 
 router = APIRouter(prefix="/users", tags=["users"])
 
-# CREATE User with Profile
 @router.post("/", response_model=UserWithProfile)
 async def create_user_with_profile(
     user_data: UserCreateWithProfile,
@@ -21,7 +20,6 @@ async def create_user_with_profile(
         user_data.user_profile
     )
 
-# READ User by ID with Profile
 @router.get("/{user_id}", response_model=UserWithProfile)
 async def read_user(
     user_id: uuid.UUID,
@@ -29,7 +27,6 @@ async def read_user(
 ):
     return await UserService.get_user_with_profile(session, user_id)
 
-# UPDATE User and Profile
 @router.put("/{user_id}", response_model=UserWithProfile)
 async def update_user_with_profile(
     user_id: uuid.UUID,
@@ -43,7 +40,6 @@ async def update_user_with_profile(
         user_data.user_profile
     )
 
-# DELETE User and Profile
 @router.delete("/{user_id}")
 async def delete_user(
     user_id: uuid.UUID,
@@ -51,9 +47,6 @@ async def delete_user(
 ):
     return await UserService.delete_user_with_profile(session, user_id)
 
-# ========== USER PROFILE SPECIFIC ENDPOINTS ==========
-
-# GET User Profile only
 @router.get("/{user_id}/profile", response_model=UserProfile)
 async def get_user_profile(
     user_id: uuid.UUID,
@@ -61,7 +54,6 @@ async def get_user_profile(
 ):
     return await UserProfileService.get_user_profile(session, user_id)
 
-# UPDATE User Profile only
 @router.put("/{user_id}/profile", response_model=UserProfile)
 async def update_user_profile(
     user_id: uuid.UUID,

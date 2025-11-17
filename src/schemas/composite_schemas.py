@@ -24,7 +24,6 @@ class UserUpdateWithProfile(BaseModel):
     user_profile: UserProfileUpdate
 
 
-# Composite Schemas with relationships
 class OrdersItemsWithDetails(OrdersItems):
     order: Optional['Orders'] = None
     item: Optional['Items'] = None
@@ -37,7 +36,7 @@ class ItemsWithOrders(Items):
 class OrdersWithItemsAndCustomer(Orders):
     customer: Optional['Customer'] = None
     order_items: List[OrdersItemsWithDetails] = []
-    items: List[Items] = []  # Упрощенный доступ к товарам
+    items: List[Items] = []
 
 
 class OrdersCreateWithItems(BaseModel):
@@ -50,7 +49,6 @@ class OrdersUpdateWithItems(BaseModel):
     items: List[ItemsCreate] = []
 
 
-# Composite Schemas
 class OrdersWithCustomer(Orders):
     customer: Optional[Customer] = None
 

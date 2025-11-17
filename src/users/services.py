@@ -11,13 +11,11 @@ class UserService:
 
     @staticmethod
     async def create_user_with_profile(db: Session, user_data, profile_data):
-        # Create User
         db_user = User(**user_data.model_dump())
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
 
-        # Create UserProfile
         profile_dict = profile_data.model_dump()
         profile_dict['user_id'] = db_user.id
         db_profile = UserProfile(**profile_dict)
@@ -25,7 +23,6 @@ class UserService:
         db.commit()
         db.refresh(db_profile)
 
-        # Prepare result
         result = db_user.__dict__
         result['user_profile'] = db_profile
         return result
@@ -42,7 +39,6 @@ class UserService:
 
     @staticmethod
     async def update_user_with_profile(db: Session, user_id: uuid.UUID, user_update_data, profile_update_data):
-        # Update User
         db_user = db.query(User).filter(User.id == user_id).first()
         if not db_user:
             raise HTTPException(status_code=404, detail="User not found")
@@ -50,7 +46,6 @@ class UserService:
         for field, value in user_update_data.model_dump().items():
             setattr(db_user, field, value)
 
-        # Update or Create UserProfile
         db_profile = db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
         if db_profile:
             for field, value in profile_update_data.model_dump().items():
