@@ -9,3 +9,14 @@ services:
       POSTGRES_PASSWORD: 123456
     ports:
       - "5432:5432"
+  web:
+    build: .  # ← Теперь используем Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:123456@postgres:5432/postgres
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
