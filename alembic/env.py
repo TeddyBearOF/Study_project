@@ -5,7 +5,13 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from src.models.users import Base
+from src.models.base import Base
+from src.models.user import User
+from src.models.user_profile import UserProfile
+from src.models.orders_items import OrdersItems
+from src.models.orders import Orders
+from src.models.items import Items
+from src.models.customer import Customer
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

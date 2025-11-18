@@ -9,7 +9,7 @@ settings = Settings()
 
 engine = create_engine(str(settings.postgres_url))
 
-
+#Переделать в ассинхронную
 @contextmanager
 async def get_session() -> Session:
     session: Session = Session(engine)
