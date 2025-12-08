@@ -1,5 +1,8 @@
 import uuid
-from sqlalchemy.orm import Session
+
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy import select
 from fastapi import HTTPException
 
 from src.models.user import User
@@ -10,7 +13,7 @@ from src.schemas.base_schemas import UserCreate, UserUpdate, UserProfileCreate, 
 class UserService:
 
     @staticmethod
-    async def create_user_with_profile(db: Session, user_data, profile_data):
+    async def create_user_with_profile(db: AsyncSession, user_data, profile_data):
         db_user = User(**user_data.model_dump())
         db.add(db_user)
         db.commit()
@@ -26,16 +29,35 @@ class UserService:
         result = db_user.__dict__
         result['user_profile'] = db_profile
         return result
-
+'''
     @staticmethod
     async def get_user_with_profile(db: Session, user_id: uuid.UUID):
+        #db.query(User) - устаревший метод алхими 1.х
+        # .filter тоже устаревший метод, поставь where
         user = db.query(User).filter(User.id == user_id).first()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
         user_data = user.__dict__
+        #ОТДЕЛЬНЫЙ ЗАПРОС К БАЗЕ. нахуя?
         user_data['user_profile'] = user.user_profile
         return user_data
+'''
+
+    @staticmethod
+    async def get_user_with_profile(db: AsyncSession, user_id: uuid.UUID):
+        stmt = select(User)\
+            .options(selectinload(User.user_profile))\
+            .where(User.id == user_id)
+
+        result = await db.execute(stmt)
+        user = result.scalar_one_or_none()
+
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return user
+
 
     @staticmethod
     async def update_user_with_profile(db: Session, user_id: uuid.UUID, user_update_data, profile_update_data):
