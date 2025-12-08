@@ -1,19 +1,17 @@
 from contextlib import contextmanager, asynccontextmanager
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from src.config import Settings
 
 settings = Settings()
 
-engine = create_engine(str(settings.postgres_url))
+engine = create_async_engine(str(settings.postgres_url))
 
 
 @asynccontextmanager
 async def get_session() -> AsyncSession:
-    async_session = sessionmaker(
+    async_session = async_sessionmaker(
         engine,
         expire_on_commit=False,
         class_=AsyncSession
