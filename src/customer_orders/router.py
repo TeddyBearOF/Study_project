@@ -13,7 +13,7 @@ from src.schemas.composite_schemas import (
     OrdersUpdate
 )
 
-router = APIRouter(prefix="/customers", tags=["customers"])
+router = APIRouter(prefix="api/v1/customers", tags=["customers"])
 
 @router.post("/", response_model=CustomerWithOrders)
 async def create_customer_with_orders(
