@@ -12,37 +12,28 @@ from src.schemas.base_schemas import UserCreate, UserUpdate, UserProfileCreate, 
 
 class UserService:
 
+
     @staticmethod
     async def create_user_with_profile(db: AsyncSession, user_data, profile_data):
         db_user = User(**user_data.model_dump())
         db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
+        await db.flush()
 
         profile_dict = profile_data.model_dump()
         profile_dict['user_id'] = db_user.id
         db_profile = UserProfile(**profile_dict)
         db.add(db_profile)
-        db.commit()
-        db.refresh(db_profile)
 
-        result = db_user.__dict__
-        result['user_profile'] = db_profile
-        return result
-'''
-    @staticmethod
-    async def get_user_with_profile(db: Session, user_id: uuid.UUID):
-        #db.query(User) - устаревший метод алхими 1.х
-        # .filter тоже устаревший метод, поставь where
-        user = db.query(User).filter(User.id == user_id).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
 
-        user_data = user.__dict__
-        #ОТДЕЛЬНЫЙ ЗАПРОС К БАЗЕ. нахуя?
-        user_data['user_profile'] = user.user_profile
-        return user_data
-'''
+        stmt = select(User)\
+            .options(joinedload(User.user_profile))\
+            .where(User.id == db_user.id)
+
+        result = await db.execute(stmt)
+        user_with_profile = result.scalar_one_or_none()
+
+        return user_with_profile
+
 
     @staticmethod
     async def get_user_with_profile(db: AsyncSession, user_id: uuid.UUID):
@@ -58,7 +49,7 @@ class UserService:
 
         return user
 
-
+    #Ниже всё переделать в async
     @staticmethod
     async def update_user_with_profile(db: Session, user_id: uuid.UUID, user_update_data, profile_update_data):
         db_user = db.query(User).filter(User.id == user_id).first()

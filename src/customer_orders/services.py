@@ -1,6 +1,5 @@
 import uuid
 from typing import List
-from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
 from src.models.customer import Customer
@@ -11,7 +10,29 @@ from src.schemas.base_schemas import CustomerCreate, CustomerUpdate, OrdersCreat
 class CustomerService:
 
     @staticmethod
-    async def create_customer_with_orders(db: Session, customer_data, orders_data: List[OrdersCreate]):
+    async def create_user_with_profile(db: AsyncSession, user_data, profile_data):
+        db_user = User(**user_data.model_dump())
+        db.add(db_user)
+        await db.flush()
+
+        profile_dict = profile_data.model_dump()
+        profile_dict['user_id'] = db_user.id
+        db_profile = UserProfile(**profile_dict)
+        db.add(db_profile)
+
+
+        stmt = select(User)\
+            .options(joinedload(User.user_profile))\
+            .where(User.id == db_user.id)
+
+        result = await db.execute(stmt)
+        user_with_profile = result.scalar_one_or_none()
+
+        return user_with_profile
+
+
+    @staticmethod
+    async def create_customer_with_orders(db: AsyncSession, customer_data, orders_data: List[OrdersCreate]):
         # Create Customer
         db_customer = Customer(**customer_data.dict())
         db.add(db_customer)
