@@ -16,14 +16,12 @@ class User(Base):
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
-        index = True
     )
 
     username: Mapped[str] = mapped_column(
         String(255),
         unique = True,
         nullable = False,
-        index = True
     )
 
     email: Mapped[str] = mapped_column(
@@ -41,7 +39,7 @@ class User(Base):
     )
 
     def __repr__(self) -> str:
-        return f"<User(id={self.id}, username={self.username}, user_profile_id={self.user_profile_id})>"
+        return f"<User(id={self.id}, username={self.username})>"
 
 class UserProfile(Base):
     __tablename__ = 'user_profiles'
@@ -50,7 +48,6 @@ class UserProfile(Base):
         UUID(as_uuid=True),
         primary_key = True,
         default = uuid.uuid4,
-        index = True
     )
 
     user_id: Mapped[uuid.UUID] = mapped_column(
@@ -58,7 +55,7 @@ class UserProfile(Base):
         ForeignKey("users.id", ondelete="CASCADE"),
         unique=True,
         nullable=False,
-        index=True
+        index = True
     )
 
     full_name: Mapped[Optional[str]] = mapped_column(
@@ -81,3 +78,5 @@ class UserProfile(Base):
         back_populates="profile"
     )
 
+    def __repr__(self) -> str:
+        return f"<UserProfile(id={self.id}, user_id={self.user_id})>"
