@@ -2,6 +2,7 @@ import datetime
 import uuid
 from typing import Optional
 
+from pydantic import EmailStr
 from sqlalchemy import String, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql.base import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -24,7 +25,7 @@ class User(Base):
         nullable = False,
     )
 
-    email: Mapped[str] = mapped_column(
+    email: Mapped[EmailStr] = mapped_column(
         String(255),
         unique = True,
         nullable = False,
