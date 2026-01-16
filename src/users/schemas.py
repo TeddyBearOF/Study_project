@@ -50,7 +50,7 @@ class UserBaseScheme(BaseModel):
         ...,
         min_length=2,
         max_length=30,
-        pattern='^[a-zA-Z0-9]+$',
+        pattern='^[a-zA-Z0-9_]+$',
         examples=['rudik_prudik']
     )
 
