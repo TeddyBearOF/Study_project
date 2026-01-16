@@ -86,21 +86,6 @@ class UserService:
 
         return user
 
-    @staticmethod
-    async def get_users(
-            session: AsyncSession,
-            skip: int = 0,
-            limit: int = 100
-    ) -> List[User]:
-        """Получение списка пользователей"""
-        stmt = (
-            select(User)
-            .options(selectinload(User.user_profile))
-            .offset(skip)
-            .limit(limit)
-        )
-        result = await session.execute(stmt)
-        return list(result.scalars().all())
 
     @staticmethod
     async def update_user(

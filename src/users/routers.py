@@ -26,16 +26,6 @@ async def create_user(
     return await UserService.create_user(session, user_data)
 
 
-@router.get("/", response_model=list[UserResponseScheme])
-async def get_users(
-    skip: int = 0,
-    limit: int = 100,
-    session: AsyncSession = Depends(get_session)
-):
-    """Получение списка пользователей"""
-    return await UserService.get_users(session, skip, limit)
-
-
 @router.get("/{user_id}", response_model=UserResponseScheme)
 async def get_user(
     user_id: uuid.UUID,
