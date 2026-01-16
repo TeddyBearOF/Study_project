@@ -1,5 +1,3 @@
-
-# src/users/services.py
 import uuid
 from datetime import datetime, date
 from typing import Optional, List

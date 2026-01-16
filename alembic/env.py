@@ -7,6 +7,7 @@ from alembic import context
 
 from src.models.base import Base
 from src.users.models import User, UserProfile
+from src.resumes_vacancies.models import Resume, Vacancy, VacancyResume
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
