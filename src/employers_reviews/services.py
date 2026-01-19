@@ -3,20 +3,27 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
+from src.exceptions import EntityNotFoundException, InvalidInputDataException
+
 from src.employers_reviews.models import Employer, Review
 from src.employers_reviews.schemas import EmployerCreate, EmployerUpdate
 
 
 class EmployerService:
     @staticmethod
-    async def get_employer_by_id(db: AsyncSession, employer_id: int) -> Optional[Employer]:
+    async def get_employer_by_id(db: AsyncSession, employer_id: int) -> Employer:
         stmt = (
             select(Employer)
             .where(Employer.id == employer_id)
             .options(selectinload(Employer.reviews))
         )
         result = await db.execute(stmt)
-        return result.scalar_one_or_none()
+        employer = result.scalar_one_or_none()
+
+        if not employer:
+            raise EntityNotFoundException("Employer", str(employer_id))
+
+        return employer
 
     @staticmethod
     async def create_employer(db: AsyncSession, employer_data: EmployerCreate) -> Employer:
@@ -28,6 +35,8 @@ class EmployerService:
 
         if employer_data.reviews:
             for review_data in employer_data.reviews:
+                if review_data.stars < 1 or review_data.stars > 5:
+                    raise InvalidInputDataException("Stars must be between 1 and 5")
                 review = Review(
                     title=review_data.title,
                     stars=review_data.stars
@@ -59,6 +68,8 @@ class EmployerService:
         if employer_data.reviews is not None:
             employer.reviews.clear()
             for review_data in employer_data.reviews:
+                if review_data.stars < 1 or review_data.stars > 5:
+                    raise InvalidInputDataException("Stars must be between 1 and 5")
                 review = Review(
                     title=review_data.title,
                     stars=review_data.stars

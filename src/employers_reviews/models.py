@@ -30,7 +30,8 @@ class Employer(Base):
     reviews: Mapped[list["Review"]] = relationship(
         "Review",
         back_populates="employer",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        lazy="selectin"
     )
 
 

@@ -3,7 +3,8 @@ from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert
 from sqlalchemy.orm import selectinload
-from fastapi import HTTPException, status
+
+from src.exceptions import EntityNotFoundException, EntityAlreadyExistsException, InvalidInputDataException
 
 from src.resumes_vacancies.models import Resume, Vacancy, VacancyResume
 from src.resumes_vacancies.schemas import (
@@ -24,19 +25,16 @@ class ResumeService:
             salary=resume_data.salary
         )
         session.add(resume)
-        await session.flush()  # чтобы получить resume.id
+        await session.flush()
 
-        # Добавляем связи с вакансиями
         if resume_data.vacancies_replied:
-            # Проверим, существуют ли вакансии (опционально)
             select_vacancies_stmt = select(Vacancy.id).where(Vacancy.id.in_(resume_data.vacancies_replied))
             result = await session.execute(select_vacancies_stmt)
             existing_ids = {row[0] for row in result.fetchall()}
             invalid_ids = set(resume_data.vacancies_replied) - existing_ids
             if invalid_ids:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Vacancies not found: {list(invalid_ids)}"
+                raise InvalidInputDataException(
+                    f"Vacancies not found: {list(invalid_ids)}"
                 )
 
             # Вставляем связи
@@ -48,7 +46,6 @@ class ResumeService:
 
         await session.commit()
 
-        # Возвращаем с загруженными вакансиями
         select_final_stmt = (
             select(Resume)
             .where(Resume.id == resume.id)
@@ -56,7 +53,6 @@ class ResumeService:
         )
         result = await session.execute(select_final_stmt)
         return result.scalar_one()
-
 
     @staticmethod
     async def get_resume_by_id(
@@ -72,13 +68,9 @@ class ResumeService:
         resume = result.scalar_one_or_none()
 
         if not resume:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Resume not found"
-            )
+            raise EntityNotFoundException("Resume", str(resume_id))
 
         return resume
-
 
     @staticmethod
     async def get_resumes(
@@ -146,9 +138,8 @@ class VacancyService:
             existing_ids = {row[0] for row in result.fetchall()}
             invalid_ids = set(vacancy_data.resumes_replied) - existing_ids
             if invalid_ids:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Resumes not found: {list(invalid_ids)}"
+                raise InvalidInputDataException(
+                    f"Resumes not found: {list(invalid_ids)}"
                 )
 
             insert_stmt = insert(VacancyResume).values([
@@ -181,10 +172,7 @@ class VacancyService:
         vacancy = result.scalar_one_or_none()
 
         if not vacancy:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Vacancy not found"
-            )
+            raise EntityNotFoundException("Vacancy", str(vacancy_id))
 
         return vacancy
 

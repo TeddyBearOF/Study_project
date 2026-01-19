@@ -67,16 +67,24 @@ class ResumeResponseScheme(ResumeBaseScheme):
         ...,
         examples=['123e4567-e89b-12d3-a456-426614174001']
     )
-    vacancies_replied: List[VacancyResponseScheme] = []
+    vacancies_replied: List['VacancyResponseScheme'] = []
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class VacancyWithResumesScheme(VacancyResponseScheme):
-    resumes_replied: List[ResumeResponseScheme] = []
+    resumes_replied: List['ResumeResponseScheme'] = []
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ResumeWithVacanciesScheme(ResumeResponseScheme):
-    vacancies_replied: List[VacancyResponseScheme] = []
+    vacancies_replied: List['VacancyResponseScheme'] = []
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+ResumeResponseScheme.model_rebuild()
+VacancyResponseScheme.model_rebuild()
 
 

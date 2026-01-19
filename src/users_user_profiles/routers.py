@@ -10,7 +10,7 @@ from src.users_user_profiles.schemas import (
     UserUpdateScheme
 )
 
-router = APIRouter(prefix="/users_user_profiles", tags=["users_user_profiles"])
+router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.post(
@@ -25,7 +25,7 @@ async def create_user(
     return await UserService.create_user(session, user_data)
 
 
-@router.get("/{user_id}", response_model=UserResponseScheme)
+@router.get("/{user_id}", response_model=UserResponseScheme, status_code=status.HTTP_200_OK)
 async def get_user(
     user_id: uuid.UUID,
     session: AsyncSession = Depends(get_session)
@@ -33,7 +33,7 @@ async def get_user(
     return await UserService.get_user_by_id(session, user_id)
 
 
-@router.put("/{user_id}", response_model=UserResponseScheme)
+@router.put("/{user_id}", response_model=UserResponseScheme, status_code=status.HTTP_200_OK)
 async def update_user(
     user_id: uuid.UUID,
     user_data: UserUpdateScheme,

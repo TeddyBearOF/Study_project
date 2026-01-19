@@ -4,7 +4,8 @@ from typing import Optional, List
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
-from fastapi import HTTPException, status
+
+from src.exceptions import EntityNotFoundException, EntityAlreadyExistsException
 
 from src.users_user_profiles.models import User, UserProfile
 from src.users_user_profiles.schemas import UserCreateScheme, UserUpdateScheme
@@ -21,9 +22,10 @@ class UserService:
         )
         result = await session.execute(stmt)
         if result.scalar_one_or_none():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Username or email already exists"
+            raise EntityAlreadyExistsException(
+                "User",
+                "username или email",
+                user_data.email or user_data.username
             )
 
         user = User(
@@ -66,13 +68,9 @@ class UserService:
         user = result.scalar_one_or_none()
 
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
+            raise EntityNotFoundException("User", str(user_id))
 
         return user
-
 
     @staticmethod
     async def update_user(

@@ -27,7 +27,7 @@ async def create_resume(
     return await ResumeService.create_resume(session, resume_data)
 
 
-@router.get("/resumes/{resume_id}", response_model=ResumeResponseScheme)
+@router.get("/resumes/{resume_id}", response_model=ResumeResponseScheme, status_code=status.HTTP_200_OK)
 async def get_resume(
         resume_id: uuid.UUID,
         with_vacancies: bool = Query(False, description="Включить связанные вакансии"),
@@ -38,12 +38,12 @@ async def get_resume(
     )
 
     if with_vacancies:
-        return ResumeWithVacanciesScheme.from_orm(resume)
+        return ResumeWithVacanciesScheme.model_validate(resume)
     else:
-        return ResumeResponseScheme.from_orm(resume)
+        return ResumeResponseScheme.model_validate(resume)
 
 
-@router.get("/resumes/", response_model=list[ResumeResponseScheme])
+@router.get("/resumes/", response_model=list[ResumeResponseScheme], status_code=status.HTTP_200_OK)
 async def get_resumes(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
@@ -52,7 +52,7 @@ async def get_resumes(
     return await ResumeService.get_resumes(session, skip, limit)
 
 
-@router.put("/resumes/{resume_id}", response_model=ResumeResponseScheme)
+@router.put("/resumes/{resume_id}", response_model=ResumeResponseScheme, status_code=status.HTTP_200_OK)
 async def update_resume(
         resume_id: uuid.UUID,
         resume_data: ResumeUpdateScheme,
@@ -84,7 +84,7 @@ async def create_vacancy(
     return await VacancyService.create_vacancy(session, vacancy_data)
 
 
-@router.get("/vacancies/{vacancy_id}", response_model=VacancyResponseScheme)
+@router.get("/vacancies/{vacancy_id}", response_model=VacancyResponseScheme, status_code=status.HTTP_200_OK)
 async def get_vacancy(
         vacancy_id: uuid.UUID,
         with_resumes: bool = Query(False, description="Включить связанные резюме"),
@@ -95,12 +95,12 @@ async def get_vacancy(
     )
 
     if with_resumes:
-        return VacancyWithResumesScheme.from_orm(vacancy)
+        return VacancyWithResumesScheme.model_validate(vacancy)
     else:
-        return VacancyResponseScheme.from_orm(vacancy)
+        return VacancyResponseScheme.model_validate(vacancy)
 
 
-@router.get("/vacancies/", response_model=list[VacancyResponseScheme])
+@router.get("/vacancies/", response_model=list[VacancyResponseScheme], status_code=status.HTTP_200_OK)
 async def get_vacancies(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
@@ -109,7 +109,7 @@ async def get_vacancies(
     return await VacancyService.get_vacancies(session, skip, limit)
 
 
-@router.put("/vacancies/{vacancy_id}", response_model=VacancyResponseScheme)
+@router.put("/vacancies/{vacancy_id}", response_model=VacancyResponseScheme, status_code=status.HTTP_200_OK)
 async def update_vacancy(
         vacancy_id: uuid.UUID,
         vacancy_data: VacancyUpdateScheme,
