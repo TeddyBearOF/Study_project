@@ -14,7 +14,7 @@ from src.resumes_vacancies.schemas import (
 
 router = APIRouter(prefix="/resumes-vacancies", tags=["resumes-vacancies"])
 
-# ===== РЕЗЮМЕ =====
+
 @router.post(
     "/resumes/",
     response_model=ResumeResponseScheme,
@@ -24,7 +24,6 @@ async def create_resume(
     resume_data: ResumeCreateScheme,
     session: AsyncSession = Depends(get_session)
 ):
-    """Создание резюме"""
     return await ResumeService.create_resume(session, resume_data)
 
 
@@ -34,7 +33,6 @@ async def get_resume(
         with_vacancies: bool = Query(False, description="Включить связанные вакансии"),
         session: AsyncSession = Depends(get_session)
 ):
-    """Получение резюме по ID"""
     resume = await ResumeService.get_resume_by_id(
         session, resume_id, with_vacancies=with_vacancies
     )
@@ -51,7 +49,6 @@ async def get_resumes(
     limit: int = Query(100, ge=1, le=1000),
     session: AsyncSession = Depends(get_session)
 ):
-    """Получение списка резюме"""
     return await ResumeService.get_resumes(session, skip, limit)
 
 
@@ -61,7 +58,6 @@ async def update_resume(
         resume_data: ResumeUpdateScheme,
         session: AsyncSession = Depends(get_session)
 ):
-    """Обновление резюме"""
     return await ResumeService.update_resume(session, resume_id, resume_data)
 
 
@@ -73,11 +69,9 @@ async def delete_resume(
         resume_id: uuid.UUID,
         session: AsyncSession = Depends(get_session)
 ):
-    """Удаление резюме"""
     await ResumeService.delete_resume(session, resume_id)
 
 
-# ===== ВАКАНСИИ =====
 @router.post(
     "/vacancies/",
     response_model=VacancyResponseScheme,
@@ -87,7 +81,6 @@ async def create_vacancy(
         vacancy_data: VacancyCreateScheme,
         session: AsyncSession = Depends(get_session)
 ):
-    """Создание вакансии"""
     return await VacancyService.create_vacancy(session, vacancy_data)
 
 
@@ -97,7 +90,6 @@ async def get_vacancy(
         with_resumes: bool = Query(False, description="Включить связанные резюме"),
         session: AsyncSession = Depends(get_session)
 ):
-    """Получение вакансии по ID"""
     vacancy = await VacancyService.get_vacancy_by_id(
         session, vacancy_id, with_resumes=with_resumes
     )
@@ -114,7 +106,6 @@ async def get_vacancies(
     limit: int = Query(100, ge=1, le=1000),
     session: AsyncSession = Depends(get_session)
 ):
-    """Получение списка вакансий"""
     return await VacancyService.get_vacancies(session, skip, limit)
 
 
@@ -124,7 +115,6 @@ async def update_vacancy(
         vacancy_data: VacancyUpdateScheme,
         session: AsyncSession = Depends(get_session)
 ):
-    """Обновление вакансии"""
     return await VacancyService.update_vacancy(session, vacancy_id, vacancy_data)
 
 
@@ -136,5 +126,4 @@ async def delete_vacancy(
         vacancy_id: uuid.UUID,
         session: AsyncSession = Depends(get_session)
 ):
-    """Удаление вакансии"""
     await VacancyService.delete_vacancy(session, vacancy_id)

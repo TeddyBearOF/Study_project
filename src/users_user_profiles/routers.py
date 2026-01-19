@@ -3,14 +3,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
 
 from src.db import get_session
-from src.users.services import UserService
-from src.users.schemas import (
+from src.users_user_profiles.services import UserService
+from src.users_user_profiles.schemas import (
     UserCreateScheme,
     UserResponseScheme,
     UserUpdateScheme
 )
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="/users_user_profiles", tags=["users_user_profiles"])
 
 
 @router.post(
@@ -22,7 +22,6 @@ async def create_user(
     user_data: UserCreateScheme,
     session: AsyncSession = Depends(get_session)
 ):
-    """Создание нового пользователя"""
     return await UserService.create_user(session, user_data)
 
 
@@ -31,7 +30,6 @@ async def get_user(
     user_id: uuid.UUID,
     session: AsyncSession = Depends(get_session)
 ):
-    """Получение пользователя по ID"""
     return await UserService.get_user_by_id(session, user_id)
 
 
@@ -41,7 +39,6 @@ async def update_user(
     user_data: UserUpdateScheme,
     session: AsyncSession = Depends(get_session)
 ):
-    """Обновление пользователя"""
     return await UserService.update_user(session, user_id, user_data)
 
 
@@ -50,5 +47,4 @@ async def delete_user(
     user_id: uuid.UUID,
     session: AsyncSession = Depends(get_session)
 ):
-    """Удаление пользователя"""
     await UserService.delete_user(session, user_id)

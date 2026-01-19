@@ -6,7 +6,6 @@ from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
 class UserProfileBaseScheme(BaseModel):
-    """Базовая схема профиля"""
     full_name: Optional[str] = Field(
         None,
         max_length=100,
@@ -25,17 +24,14 @@ class UserProfileBaseScheme(BaseModel):
 
 
 class UserProfileCreateScheme(UserProfileBaseScheme):
-    """Схема для создания профиля"""
     pass
 
 
 class UserProfileUpdateScheme(UserProfileBaseScheme):
-    """Схема для обновления профиля"""
     pass
 
 
 class UserProfileResponseScheme(UserProfileBaseScheme):
-    """Схема ответа с профилем"""
     id: uuid.UUID = Field(
         ...,
         examples=['123e4567-e89b-12d3-a456-426614174000']
@@ -61,12 +57,10 @@ class UserBaseScheme(BaseModel):
 
 
 class UserCreateScheme(UserBaseScheme):
-    """Схема для создания пользователя"""
     user_profile: Optional[UserProfileCreateScheme] = None
 
 
 class UserUpdateScheme(BaseModel):
-    """Схема для обновления пользователя"""
     username: Optional[str] = Field(
         None,
         min_length=3,
@@ -78,7 +72,6 @@ class UserUpdateScheme(BaseModel):
 
 
 class UserResponseScheme(UserBaseScheme):
-    """Схема ответа с пользователем"""
     id: uuid.UUID = Field(
         ...,
         examples=['123e4567-e89b-12d3-a456-426614174000']

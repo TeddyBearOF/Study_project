@@ -3,7 +3,7 @@ import uuid
 from typing import Optional
 
 from pydantic import EmailStr
-from sqlalchemy import String, DateTime, ForeignKey
+from sqlalchemy import String, Date, ForeignKey
 from sqlalchemy.dialects.postgresql.base import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -70,7 +70,7 @@ class UserProfile(Base):
     )
 
     date_of_birth: Mapped[Optional[datetime]] = mapped_column(
-        DateTime(timezone=True),
+        Date,
         nullable=True
     )
 

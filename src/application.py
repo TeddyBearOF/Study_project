@@ -3,8 +3,9 @@ from fastapi.responses import UJSONResponse
 from starlette.middleware.cors import CORSMiddleware
 
 from src import healthcheck
-from src.users import routers as users_router
+from src.users_user_profiles import routers as users_router
 from src.resumes_vacancies import routers as resumes_vacancies_router
+from src.employers_reviews import routers as employers_reviews_router
 
 def get_app() -> FastAPI:
     """
@@ -31,7 +32,8 @@ def get_app() -> FastAPI:
     app.include_router(router=healthcheck.router)
     app.include_router(router=users_router.router)
     app.include_router(router=resumes_vacancies_router.router)
+    app.include_router(router=employers_reviews_router.router)
 
-    # Main router.py for the API.
+    # Main routers.py for the API.
 
     return app

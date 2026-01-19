@@ -6,19 +6,16 @@ from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
 from fastapi import HTTPException, status
 
-from src.users.models import User, UserProfile
-from src.users.schemas import UserCreateScheme, UserUpdateScheme
+from src.users_user_profiles.models import User, UserProfile
+from src.users_user_profiles.schemas import UserCreateScheme, UserUpdateScheme
 
 
 class UserService:
-    """Сервис для работы с пользователями"""
-
     @staticmethod
     async def create_user(
             session: AsyncSession,
             user_data: UserCreateScheme
     ) -> User:
-        """Создание пользователя с профилем"""
         stmt = select(User).where(
             or_(User.username == user_data.username, User.email == user_data.email)
         )
@@ -38,13 +35,6 @@ class UserService:
 
         if user_data.user_profile:
             profile_data = user_data.user_profile.model_dump()
-
-            if profile_data.get('date_of_birth'):
-                if isinstance(profile_data['date_of_birth'], date):
-                    profile_data['date_of_birth'] = datetime.combine(
-                        profile_data['date_of_birth'],
-                        datetime.min.time()
-                    )
 
             profile = UserProfile(
                 user_id=user.id,
@@ -67,7 +57,6 @@ class UserService:
             session: AsyncSession,
             user_id: uuid.UUID
     ) -> User:
-        """Получение пользователя по ID"""
         stmt = (
             select(User)
             .where(User.id == user_id)
@@ -91,7 +80,6 @@ class UserService:
             user_id: uuid.UUID,
             user_data: UserUpdateScheme
     ) -> User:
-        """Обновление пользователя и профиля"""
         user = await UserService.get_user_by_id(session, user_id)
 
         update_data = user_data.model_dump(exclude_unset=True, exclude={"user_profile"})
@@ -100,13 +88,6 @@ class UserService:
 
         if user_data.user_profile:
             profile_data = user_data.user_profile.model_dump(exclude_unset=True)
-
-            if 'date_of_birth' in profile_data:
-                if isinstance(profile_data['date_of_birth'], date):
-                    profile_data['date_of_birth'] = datetime.combine(
-                        profile_data['date_of_birth'],
-                        datetime.min.time()
-                    )
 
             if not user.user_profile:
                 profile = UserProfile(user_id=user.id, **profile_data)
@@ -124,7 +105,6 @@ class UserService:
             session: AsyncSession,
             user_id: uuid.UUID
     ) -> bool:
-        """Удаление пользователя"""
         user = await UserService.get_user_by_id(session, user_id)
 
         await session.delete(user)
