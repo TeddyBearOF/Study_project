@@ -1,3 +1,5 @@
+import uuid
+
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 
@@ -13,11 +15,14 @@ class ReviewCreate(ReviewBase):
 
 class ReviewUpdate(ReviewBase):
     title: Optional[str] = Field(None, max_length=255)
-    stars: Optional[int] = Field(None, ge=0, le=5)
+    stars: Optional[int] = Field(None, ge=1, le=5)
 
 
 class ReviewResponse(ReviewBase):
-    id: int
+    id: uuid.UUID = Field(
+        ...,
+        examples=['123e4567-e89b-12d3-a456-426614174000']
+    )
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -40,7 +45,10 @@ class EmployerUpdate(EmployerBase):
 
 
 class EmployerResponse(EmployerBase):
-    id: int
+    id: uuid.UUID = Field(
+        ...,
+        examples=['123e4567-e89b-12d3-a456-426614174000']
+    )
     reviews: List[ReviewResponse] = []
 
     model_config = ConfigDict(from_attributes=True)

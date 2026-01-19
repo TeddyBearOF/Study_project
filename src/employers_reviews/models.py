@@ -34,6 +34,8 @@ class Employer(Base):
         lazy="selectin"
     )
 
+    def __repr__(self) -> str:
+        return f"<Employer(id={self.id}, title={self.title})>"
 
 class Review(Base):
     __tablename__ = 'reviews'
@@ -46,7 +48,8 @@ class Review(Base):
     employer_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey('employers.id', ondelete="CASCADE"),
-        nullable=False
+        nullable=False,
+        index=True
     )
 
     title: Mapped[str] = mapped_column(
@@ -56,10 +59,14 @@ class Review(Base):
 
     stars: Mapped[int] = mapped_column(
         Integer,
-        nullable=False
+        nullable=False,
+        index=True
     )
 
     employer: Mapped["Employer"] = relationship(
         "Employer",
         back_populates="reviews"
     )
+
+    def __repr__(self) -> str:
+        return f"<Review(id={self.id}, employer_id={self.employer_id}, stars={self.stars})>"

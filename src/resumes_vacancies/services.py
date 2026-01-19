@@ -57,13 +57,12 @@ class ResumeService:
     @staticmethod
     async def get_resume_by_id(
             session: AsyncSession,
-            resume_id: uuid.UUID
+            resume_id: uuid.UUID,
+            with_vacancies: bool = False
     ) -> Resume:
-        stmt = (
-            select(Resume)
-            .where(Resume.id == resume_id)
-            .options(selectinload(Resume.vacancies_replied))
-        )
+        stmt = select(Resume)
+        if with_vacancies:
+            stmt = stmt.options(selectinload(Resume.vacancies_replied))
         result = await session.execute(stmt)
         resume = result.scalar_one_or_none()
 
@@ -161,13 +160,13 @@ class VacancyService:
     @staticmethod
     async def get_vacancy_by_id(
             session: AsyncSession,
-            vacancy_id: uuid.UUID
+            vacancy_id: uuid.UUID,
+            with_resumes: bool = False
     ) -> Vacancy:
-        stmt = (
-            select(Vacancy)
-            .where(Vacancy.id == vacancy_id)
-            .options(selectinload(Vacancy.resumes_replied))
-        )
+        stmt = select(Vacancy)
+        if with_resumes:
+            stmt = stmt.options(selectinload(Vacancy.resumes_replied))
+        stmt = stmt.where(Vacancy.id == vacancy_id)
         result = await session.execute(stmt)
         vacancy = result.scalar_one_or_none()
 

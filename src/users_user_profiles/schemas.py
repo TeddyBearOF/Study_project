@@ -63,7 +63,7 @@ class UserCreateScheme(UserBaseScheme):
 class UserUpdateScheme(BaseModel):
     username: Optional[str] = Field(
         None,
-        min_length=3,
+        min_length=2,
         max_length=50,
         pattern='^[a-zA-Z0-9_]+$'
     )

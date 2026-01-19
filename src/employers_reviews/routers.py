@@ -23,10 +23,7 @@ async def get_employer(
     employer_id: int,
     db: AsyncSession = Depends(get_session)
 ):
-    employer = await EmployerService.get_employer_by_id(db, employer_id)
-    if not employer:
-        raise HTTPException(status_code=404, detail="Employer not found")
-    return employer
+    return await EmployerService.get_employer_by_id(db, employer_id)
 
 
 @router.put("/{employer_id}", response_model=EmployerResponse)
@@ -36,8 +33,6 @@ async def update_employer(
     db: AsyncSession = Depends(get_session)
 ):
     employer = await EmployerService.get_employer_by_id(db, employer_id)
-    if not employer:
-        raise HTTPException(status_code=404, detail="Employer not found")
     return await EmployerService.update_employer(db, employer, employer_data)
 
 
@@ -47,6 +42,4 @@ async def delete_employer(
     db: AsyncSession = Depends(get_session)
 ):
     employer = await EmployerService.get_employer_by_id(db, employer_id)
-    if not employer:
-        raise HTTPException(status_code=404, detail="Employer not found")
     await EmployerService.delete_employer(db, employer)

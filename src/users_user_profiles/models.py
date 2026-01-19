@@ -23,6 +23,7 @@ class User(Base):
         String(255),
         unique = True,
         nullable = False,
+        index = True
     )
 
     email: Mapped[EmailStr] = mapped_column(
@@ -69,7 +70,7 @@ class UserProfile(Base):
         nullable=True
     )
 
-    date_of_birth: Mapped[Optional[datetime]] = mapped_column(
+    date_of_birth: Mapped[Optional[datetime.date]] = mapped_column(
         Date,
         nullable=True
     )

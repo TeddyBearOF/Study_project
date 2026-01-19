@@ -37,6 +37,10 @@ class Vacancy(Base):
         cascade='all, delete'
     )
 
+    def __repr__(self) -> str:
+        return f"<Vacancy(id={self.id}, title={self.title!r}, salary={self.salary})>"
+
+
 class Resume(Base):
     __tablename__ = "resumes"
 
@@ -71,16 +75,24 @@ class Resume(Base):
         cascade="all, delete"
     )
 
+    def __repr__(self) -> str:
+        return f"<Resume(id={self.id}, candidate_name={self.candidate_name!r}, main_skill={self.main_skill!r}, salary={self.salary})>"
+
+
 class VacancyResume(Base):
     __tablename__ = "vacancies_resumes"
 
     resume_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey('resumes.id', ondelete='CASCADE'),
-        primary_key=True
+        primary_key=True,
+        index=True
     )
 
     vacancy_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey('vacancies.id', ondelete='CASCADE'),
-        primary_key=True
+        primary_key=True,
+        index=True
     )
 
+    def __repr__(self) -> str:
+        return f"<VacancyResume(resume_id={self.resume_id}, vacancy_id={self.vacancy_id})>"

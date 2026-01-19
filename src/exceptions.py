@@ -1,16 +1,7 @@
-"""
-Кастомные исключения для всего приложения.
-Используются вместо прямого вызова HTTPException в сервисах.
-"""
-
 from typing import Optional
 
 
 class AppException(Exception):
-    """
-    Базовый класс для всех бизнес-исключений.
-    Позволяет централизованно обрабатывать ошибки через exception_handler.
-    """
     def __init__(
         self,
         message: str,
@@ -24,7 +15,6 @@ class AppException(Exception):
 
 
 class EntityNotFoundException(AppException):
-    """Выбрасывается, когда сущность (User, Resume и т.д.) не найдена."""
     def __init__(self, entity_name: str, entity_id: str):
         super().__init__(
             message=f"{entity_name} с ID {entity_id} не найден",
@@ -33,7 +23,6 @@ class EntityNotFoundException(AppException):
 
 
 class EntityAlreadyExistsException(AppException):
-    """Выбрасывается при попытке создать уже существующую сущность."""
     def __init__(self, entity_name: str, field: str, value: str):
         super().__init__(
             message=f"{entity_name} с {field}={value} уже существует",
@@ -42,7 +31,6 @@ class EntityAlreadyExistsException(AppException):
 
 
 class InvalidInputDataException(AppException):
-    """Некорректные входные данные (аналог 422 Unprocessable Entity)."""
     def __init__(self, reason: str):
         super().__init__(
             message="Некорректные входные данные",
@@ -52,7 +40,6 @@ class InvalidInputDataException(AppException):
 
 
 class UnauthorizedException(AppException):
-    """Пользователь не авторизован."""
     def __init__(self):
         super().__init__(
             message="Доступ запрещён: требуется авторизация",
@@ -61,7 +48,6 @@ class UnauthorizedException(AppException):
 
 
 class ForbiddenException(AppException):
-    """Пользователь авторизован, но не имеет прав."""
     def __init__(self):
         super().__init__(
             message="Недостаточно прав для выполнения действия",
@@ -70,7 +56,6 @@ class ForbiddenException(AppException):
 
 
 class InternalServerException(AppException):
-    """Внутренняя ошибка сервера."""
     def __init__(self, details: str = "Неизвестная ошибка"):
         super().__init__(
             message="Внутренняя ошибка сервера",
