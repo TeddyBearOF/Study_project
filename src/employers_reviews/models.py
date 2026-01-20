@@ -1,4 +1,6 @@
-from sqlalchemy import String, Integer
+import uuid
+
+from sqlalchemy import String, Integer, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql.schema import ForeignKey
 
@@ -8,11 +10,13 @@ from src.models import Base
 class Employer(Base):
     __tablename__ = 'employers'
 
-    id: Mapped[int] = mapped_column(
-        Integer,
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
         primary_key=True,
+        default=uuid.uuid4,
         index=True
     )
+
 
     title: Mapped[str] = mapped_column(
         String(255),
@@ -40,13 +44,15 @@ class Employer(Base):
 class Review(Base):
     __tablename__ = 'reviews'
 
-    id: Mapped[int] = mapped_column(
-        Integer,
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
         primary_key=True,
-        index=True)
+        default=uuid.uuid4,
+        index=True
+    )
 
-    employer_id: Mapped[int] = mapped_column(
-        Integer,
+    employer_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
         ForeignKey('employers.id', ondelete="CASCADE"),
         nullable=False,
         index=True

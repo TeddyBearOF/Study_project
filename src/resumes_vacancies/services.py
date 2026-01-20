@@ -60,9 +60,8 @@ class ResumeService:
             resume_id: uuid.UUID,
             with_vacancies: bool = False
     ) -> Resume:
-        stmt = select(Resume)
-        if with_vacancies:
-            stmt = stmt.options(selectinload(Resume.vacancies_replied))
+        stmt = select(Resume).where(Resume.id == resume_id)
+        stmt = stmt.options(selectinload(Resume.vacancies_replied))
         result = await session.execute(stmt)
         resume = result.scalar_one_or_none()
 
@@ -99,13 +98,9 @@ class ResumeService:
             setattr(resume, field, value)
 
         await session.commit()
-        stmt = (
-            select(Resume)
-            .where(Resume.id == resume.id)
-            .options(selectinload(Resume.vacancies_replied))
-        )
-        result = await session.execute(stmt)
-        return result.scalar_one()
+        await session.refresh(resume)  # ← обновить, если нужно (например, default-значения)
+        return resume
+
 
     @staticmethod
     async def delete_resume(

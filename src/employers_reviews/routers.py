@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db import get_session
@@ -20,7 +21,7 @@ async def create_employer(
 
 @router.get("/{employer_id}", response_model=EmployerResponse)
 async def get_employer(
-    employer_id: int,
+    employer_id: UUID,
     db: AsyncSession = Depends(get_session)
 ):
     return await EmployerService.get_employer_by_id(db, employer_id)
@@ -28,7 +29,7 @@ async def get_employer(
 
 @router.put("/{employer_id}", response_model=EmployerResponse)
 async def update_employer(
-    employer_id: int,
+    employer_id: UUID,
     employer_data: EmployerUpdate,
     db: AsyncSession = Depends(get_session)
 ):
@@ -38,7 +39,7 @@ async def update_employer(
 
 @router.delete("/{employer_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_employer(
-    employer_id: int,
+    employer_id: UUID,
     db: AsyncSession = Depends(get_session)
 ):
     employer = await EmployerService.get_employer_by_id(db, employer_id)

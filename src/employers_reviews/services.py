@@ -1,6 +1,9 @@
+import uuid
+from uuid import UUID
 from typing import List, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.exceptions import EntityNotFoundException, InvalidInputDataException
@@ -11,7 +14,7 @@ from src.employers_reviews.schemas import EmployerCreate, EmployerUpdate
 
 class EmployerService:
     @staticmethod
-    async def get_employer_by_id(db: AsyncSession, employer_id: int) -> Employer:
+    async def get_employer_by_id(db: AsyncSession, employer_id: UUID) -> Employer:
         stmt = (
             select(Employer)
             .where(Employer.id == employer_id)
@@ -28,6 +31,7 @@ class EmployerService:
     @staticmethod
     async def create_employer(db: AsyncSession, employer_data: EmployerCreate) -> Employer:
         employer = Employer(
+            id=uuid.uuid4(),
             title=employer_data.title,
             industry=employer_data.industry,
             location=employer_data.location
