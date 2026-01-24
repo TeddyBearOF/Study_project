@@ -1,15 +1,16 @@
 import uuid
 from uuid import UUID
-from typing import List, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from src.employers_reviews.employers.models import Employer
+from src.employers_reviews.employers.schemas import EmployerCreate, EmployerUpdate
+from src.employers_reviews.reviews.models import Review
 from src.exceptions import EntityNotFoundException, InvalidInputDataException
 
-from src.employers_reviews.models import Employer, Review
-from src.employers_reviews.schemas import EmployerCreate, EmployerUpdate
+
 
 
 class EmployerService:

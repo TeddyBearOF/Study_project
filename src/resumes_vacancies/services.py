@@ -1,16 +1,15 @@
 import uuid
-from typing import List, Optional
+from typing import List, Optional, Any, Coroutine
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert
 from sqlalchemy.orm import selectinload
 
-from src.exceptions import EntityNotFoundException, EntityAlreadyExistsException, InvalidInputDataException
-
-from src.resumes_vacancies.models import Resume, Vacancy, VacancyResume
-from src.resumes_vacancies.schemas import (
-    ResumeCreateScheme, ResumeUpdateScheme,
-    VacancyCreateScheme, VacancyUpdateScheme
-)
+from src.exceptions import EntityNotFoundException, InvalidInputDataException
+from src.resumes_vacancies.models import VacancyResume
+from src.resumes_vacancies.resumes.models import Resume
+from src.resumes_vacancies.resumes.schemas import ResumeCreateScheme, ResumeUpdateScheme, ResumeResponseScheme
+from src.resumes_vacancies.vacancies.models import Vacancy
+from src.resumes_vacancies.vacancies.schemas import VacancyCreateScheme, VacancyUpdateScheme, VacancyResponseScheme
 
 
 class ResumeService:
@@ -19,30 +18,18 @@ class ResumeService:
             session: AsyncSession,
             resume_data: ResumeCreateScheme
     ) -> Resume:
-        resume = Resume(
-            candidate_name=resume_data.candidate_name,
-            main_skill=resume_data.main_skill,
-            salary=resume_data.salary
-        )
+
+        await resume_data.validate_vacancies_replied(session)
+
+        resume = Resume(**resume_data.model_dump())
         session.add(resume)
         await session.flush()
 
         if resume_data.vacancies_replied:
-            select_vacancies_stmt = select(Vacancy.id).where(Vacancy.id.in_(resume_data.vacancies_replied))
-            result = await session.execute(select_vacancies_stmt)
-            existing_ids = {row[0] for row in result.fetchall()}
-            invalid_ids = set(resume_data.vacancies_replied) - existing_ids
-            if invalid_ids:
-                raise InvalidInputDataException(
-                    f"Vacancies not found: {list(invalid_ids)}"
-                )
-
-            # Вставляем связи
-            insert_stmt = insert(VacancyResume).values([
-                {"resume_id": resume.id, "vacancy_id": vid}
-                for vid in resume_data.vacancies_replied
-            ])
-            await session.execute(insert_stmt)
+            vacancies = await session.scalars(
+                select(Vacancy).where(Vacancy.id.in_(resume_data.vacancies_replied))
+            )
+            resume.vacancies_replied.extend(vacancies)
 
         await session.commit()
 
@@ -98,7 +85,7 @@ class ResumeService:
             setattr(resume, field, value)
 
         await session.commit()
-        await session.refresh(resume)  # ← обновить, если нужно (например, default-значения)
+        await session.refresh(resume)
         return resume
 
 
@@ -106,11 +93,11 @@ class ResumeService:
     async def delete_resume(
             session: AsyncSession,
             resume_id: uuid.UUID
-    ) -> bool:
+    ) -> ResumeResponseScheme:
         resume = await ResumeService.get_resume_by_id(session, resume_id)
         await session.delete(resume)
         await session.commit()
-        return True
+        return ResumeResponseScheme.model_validate(resume)
 
 
 class VacancyService:
@@ -119,28 +106,19 @@ class VacancyService:
             session: AsyncSession,
             vacancy_data: VacancyCreateScheme
     ) -> Vacancy:
-        vacancy = Vacancy(
-            title=vacancy_data.title,
-            salary=vacancy_data.salary
-        )
+
+        await vacancy_data.validate_resumes_replied(session)
+
+        vacancy = Vacancy(**vacancy_data.model_dump())
         session.add(vacancy)
         await session.flush()
 
         if vacancy_data.resumes_replied:
-            select_resumes_stmt = select(Resume.id).where(Resume.id.in_(vacancy_data.resumes_replied))
-            result = await session.execute(select_resumes_stmt)
-            existing_ids = {row[0] for row in result.fetchall()}
-            invalid_ids = set(vacancy_data.resumes_replied) - existing_ids
-            if invalid_ids:
-                raise InvalidInputDataException(
-                    f"Resumes not found: {list(invalid_ids)}"
-                )
-
-            insert_stmt = insert(VacancyResume).values([
-                {"vacancy_id": vacancy.id, "resume_id": rid}
-                for rid in vacancy_data.resumes_replied
-            ])
-            await session.execute(insert_stmt)
+            result = await session.scalars(
+                select(Resume).where(Resume.id.in_(vacancy_data.resumes_replied))
+            )
+            resumes = result.all()
+            vacancy.resumes_replied.extend(resumes)
 
         await session.commit()
 
@@ -210,8 +188,8 @@ class VacancyService:
     async def delete_vacancy(
             session: AsyncSession,
             vacancy_id: uuid.UUID
-    ) -> bool:
+    ) -> VacancyResponseScheme:
         vacancy = await VacancyService.get_vacancy_by_id(session, vacancy_id)
         await session.delete(vacancy)
         await session.commit()
-        return True
+        return VacancyResponseScheme.model_validate(vacancy)

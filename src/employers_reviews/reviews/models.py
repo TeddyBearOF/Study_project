@@ -7,55 +7,19 @@ from sqlalchemy.sql.schema import ForeignKey
 from src.models import Base
 
 
-class Employer(Base):
-    __tablename__ = 'employers'
-
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        default=uuid.uuid4,
-        index=True
-    )
-
-
-    title: Mapped[str] = mapped_column(
-        String(255),
-        nullable=False
-    )
-
-    industry: Mapped[str] = mapped_column(
-        String(100)
-    )
-
-    location: Mapped[str] = mapped_column(
-        String(100)
-    )
-
-    reviews: Mapped[list["Review"]] = relationship(
-        "Review",
-        back_populates="employer",
-        cascade="all, delete-orphan",
-        lazy="selectin"
-    )
-
-    def __repr__(self) -> str:
-        return f"<Employer(id={self.id}, title={self.title})>"
-
 class Review(Base):
     __tablename__ = 'reviews'
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
-        default=uuid.uuid4,
-        index=True
+        default=uuid.uuid4
     )
 
     employer_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey('employers.id', ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        nullable=False
     )
 
     title: Mapped[str] = mapped_column(
@@ -65,8 +29,7 @@ class Review(Base):
 
     stars: Mapped[int] = mapped_column(
         Integer,
-        nullable=False,
-        index=True
+        nullable=False
     )
 
     employer: Mapped["Employer"] = relationship(

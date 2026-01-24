@@ -1,14 +1,12 @@
 import uuid
-from datetime import datetime, date
-from typing import Optional, List
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
 
 from src.exceptions import EntityNotFoundException, EntityAlreadyExistsException
-
-from src.users_user_profiles.models import User, UserProfile
-from src.users_user_profiles.schemas import UserCreateScheme, UserUpdateScheme
+from src.users_user_profiles.user_profiles.models import UserProfile
+from src.users_user_profiles.users.models import User
+from src.users_user_profiles.users.schemas import UserCreateScheme, UserUpdateScheme
 
 
 class UserService:

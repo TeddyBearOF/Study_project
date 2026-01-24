@@ -3,14 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
 
 from src.db import get_session
+from src.resumes_vacancies.resumes.schemas import ResumeResponseScheme, ResumeCreateScheme, ResumeUpdateScheme
+from src.resumes_vacancies.schemas import ResumeWithVacanciesScheme, VacancyWithResumesScheme
 from src.resumes_vacancies.services import (
     ResumeService, VacancyService
 )
-from src.resumes_vacancies.schemas import (
-    ResumeCreateScheme, ResumeResponseScheme, ResumeUpdateScheme,
-    VacancyCreateScheme, VacancyResponseScheme, VacancyUpdateScheme,
-    ResumeWithVacanciesScheme, VacancyWithResumesScheme
-)
+from src.resumes_vacancies.vacancies.schemas import VacancyResponseScheme, VacancyCreateScheme, VacancyUpdateScheme
 
 router = APIRouter(prefix="/resumes-vacancies", tags=["resumes-vacancies"])
 

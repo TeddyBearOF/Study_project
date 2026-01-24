@@ -1,73 +1,13 @@
-import uuid
-from typing import Optional, List
-from pydantic import BaseModel, Field, ConfigDict
+from typing import List
+
+from pydantic import ConfigDict
+
+from src.resumes_vacancies.resumes.schemas import ResumeResponseScheme
+from src.resumes_vacancies.vacancies.schemas import VacancyResponseScheme
 
 
-class VacancyBaseScheme(BaseModel):
-    title: str = Field(
-        ...,
-        max_length=200,
-        examples=['Middle Python Developer']
-    )
-    salary: Optional[int] = Field(
-        None,
-        ge=0,
-        examples=[250000]
-    )
-
-
-class VacancyCreateScheme(VacancyBaseScheme):
-    resumes_replied: List[uuid.UUID] = Field(default_factory=list)
-
-
-class VacancyUpdateScheme(BaseModel):
-    title: Optional[str] = Field(None, max_length=200)
-    salary: Optional[int] = Field(None, ge=0)
-
-
-class VacancyResponseScheme(VacancyBaseScheme):
-    id: uuid.UUID = Field(
-        ...,
-        examples=['123e4567-e89b-12d3-a456-426614174000']
-    )
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class ResumeBaseScheme(BaseModel):
-    candidate_name: str = Field(
-        ...,
-        max_length=100,
-        examples=['Рудик Прудик']
-    )
-    main_skill: str = Field(
-        ...,
-        max_length=100,
-        examples=['Python']
-    )
-    salary: Optional[int] = Field(
-        None,
-        ge=0,
-        examples=[2000]
-    )
-
-
-class ResumeCreateScheme(ResumeBaseScheme):
-    vacancies_replied: List[uuid.UUID] = Field(default_factory=list)
-
-
-class ResumeUpdateScheme(BaseModel):
-    candidate_name: Optional[str] = Field(None, max_length=100)
-    main_skill: Optional[str] = Field(None, max_length=100)
-    salary: Optional[int] = Field(None, ge=0)
-
-
-class ResumeResponseScheme(ResumeBaseScheme):
-    id: uuid.UUID = Field(
-        ...,
-        examples=['123e4567-e89b-12d3-a456-426614174001']
-    )
-    vacancies_replied: List['VacancyResponseScheme'] = []
+class ResumeWithVacanciesScheme(ResumeResponseScheme):
+    vacancies_replied: List["VacancyResponseScheme"] = []
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -78,13 +18,5 @@ class VacancyWithResumesScheme(VacancyResponseScheme):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ResumeWithVacanciesScheme(ResumeResponseScheme):
-    vacancies_replied: List['VacancyResponseScheme'] = []
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-ResumeResponseScheme.model_rebuild()
 VacancyResponseScheme.model_rebuild()
-
-
+ResumeResponseScheme.model_rebuild()

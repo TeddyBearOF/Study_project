@@ -1,11 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db import get_session
-from src.employers_reviews.schemas import (
-    EmployerCreate, EmployerResponse, EmployerUpdate,
-)
+from src.employers_reviews.employers.schemas import EmployerResponse, EmployerCreate, EmployerUpdate
 from src.employers_reviews.services import EmployerService
 
 router = APIRouter(prefix="/employers", tags=["employers"])
