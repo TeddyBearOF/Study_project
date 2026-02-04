@@ -1,0 +1,51 @@
+import datetime
+import uuid
+from typing import Optional
+
+from sqlalchemy import String, Date, ForeignKey
+from sqlalchemy.dialects.postgresql.base import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.models import Base
+
+
+
+
+class UserProfile(Base):
+    __tablename__ = 'user_profiles'
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key = True,
+        default = uuid.uuid4,
+    )
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        unique=True,
+        nullable=False
+    )
+
+    full_name: Mapped[Optional[str]] = mapped_column(
+        String(100),
+        nullable=True
+    )
+
+    bio: Mapped[Optional[str]] = mapped_column(
+        String(500),
+        nullable=True
+    )
+
+    date_of_birth: Mapped[Optional[datetime.date]] = mapped_column(
+        Date,
+        nullable=True
+    )
+
+    user: Mapped["User"] = relationship(
+        "User",
+        back_populates="user_profile"
+    )
+
+    def __repr__(self) -> str:
+        return f"<UserProfile(id={self.id}, user_id={self.user_id})>"
